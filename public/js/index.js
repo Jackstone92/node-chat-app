@@ -22,20 +22,23 @@ socket.on('disconnect', function() {
 // });
 
 socket.on('newMessage', function(message) {
-  // console.log('newMessage', message)
+  // console.log('newMessage', message);
+  var formattedTime = moment(message.createdAt).format('h:mm a');
 
   var li = jQuery('<li></li>');
-  li.text(`${message.from}: ${message.text}`);
+  li.text(`${message.from} ${formattedTime}: ${message.text}`);
 
   jQuery('#messages').append(li);
 });
 
 
 socket.on('newLocationMessage', function(message) {
+  var formattedTime = moment(message.createdAt).format('h:mm a');
+
   var li = jQuery('<li></li>');
   var a = jQuery('<a target="_blank">My current location</a>');
 
-  li.text(`${message.from}: `);
+  li.text(`${message.from} ${formattedTime}: `);
   a.attr('href', message.url);
   li.append(a);
 
@@ -43,16 +46,21 @@ socket.on('newLocationMessage', function(message) {
 });
 
 
+
+// Event Listeners //
 // use jQuery to target html form //
 jQuery('#message-form').on('submit', function(event) {
   event.preventDefault();
 
+  var messageTextBox = jQuery('input[name=message]');
+
   socket.emit('createMessage', {
     from: 'User',
-    text: jQuery('input[name=message]').val()
+    text: messageTextBox.val()
   }, function() {
     // callback //
-
+    // clear value after submit //
+    messageTextBox.val('');
   });
 
 });
@@ -64,15 +72,21 @@ locationButton.on('click', function() {
     return alert('Geolocation not supported by your browser.');
   }
 
+  // disable button and change text while sending location //
+  locationButton.attr('disabled', 'disabled').text('Sending...');;
+
   navigator.geolocation.getCurrentPosition(function(position) {
     // success callback //
-    console.log(position);
+    // console.log(position);
+    locationButton.removeAttr('disabled').text('Send Location');
+
     socket.emit('createLocationMessage', {
       latitude: position.coords.latitude,
       longitude: position.coords.longitude
     });
   }, function() {
     // error callback //
+    locationButton.removeAttr('disabled');
     alert('Unable to fetch location.');
   });
 });
