@@ -1,6 +1,27 @@
 // use to listen to server and send data to server //
 var socket = io();
 
+// autoscrolling function //
+function scrollToBottom() {
+  // Selectors //
+  var messages = jQuery('#messages');
+  var newMessage = messages.children('li:last-child');
+  // Heights //
+  var clientHeight = messages.prop('clientHeight');
+  var scrollTop = messages.prop('scrollTop');
+  var scrollHeight = messages.prop('scrollHeight');
+  var newMessageHeight = newMessage.innerHeight();
+  var lastMessageHeight = newMessage.prev().innerHeight();
+
+  // calculation //
+  if(clientHeight + scrollTop + newMessageHeight + lastMessageHeight >= scrollHeight) {
+    console.log('Should scroll');
+    messages.scrollTop(scrollHeight);
+  }
+}
+
+
+
 // client eventlisteners //
 socket.on('connect', function() {
   console.log('Connected to server');
@@ -34,6 +55,8 @@ socket.on('newMessage', function(message) {
   });
 
   jQuery('#messages').append(html);
+
+  scrollToBottom();
 });
 
 
@@ -50,6 +73,8 @@ socket.on('newLocationMessage', function(message) {
   });
 
   jQuery('#messages').append(html);
+
+  scrollToBottom();
 });
 
 
