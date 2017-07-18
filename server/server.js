@@ -9,7 +9,7 @@ const publicPath = path.join(__dirname, '../public');
 
 const port = process.env.PORT || 3000;
 
-const { generateMessage } = require('./utils/message');
+const { generateMessage, generateLocationMessage } = require('./utils/message');
 
 // console.log(__dirname + '/../public');
 // console.log(publicPath);
@@ -47,6 +47,10 @@ io.on('connection', (socket) => {
     io.emit('newMessage', generateMessage(message.from, message.text));
     // acknoledge receipt //
     callback('This is from the server.');
+  });
+
+  socket.on('createLocationMessage', (coords) => {
+    io.emit('newLocationMessage', generateLocationMessage('Admin', coords.latitude, coords.longitude));
   });
 
   socket.on('disconnect', () => {
