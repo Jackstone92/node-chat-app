@@ -10,11 +10,6 @@ socket.on('connect', function() {
   //   to: 'jen@example.com',
   //   text: 'Hey, this is Jack'
   // });
-
-  socket.emit('createMessage', {
-    from: 'Jack',
-    text: 'Hey, this is Jack!'
-  });
 });
 
 socket.on('disconnect', function() {
@@ -28,4 +23,24 @@ socket.on('disconnect', function() {
 
 socket.on('newMessage', function(message) {
   console.log('newMessage', message)
+
+  var li = jQuery('<li></li>');
+  li.text(`${message.from}: ${message.text}`);
+
+  jQuery('#messages').append(li);
+});
+
+
+// use jQuery to target html form //
+jQuery('#message-form').on('submit', function(event) {
+  event.preventDefault();
+
+  socket.emit('createMessage', {
+    from: 'User',
+    text: jQuery('input[name=message]').val()
+  }, function() {
+    // callback //
+
+  });
+
 });

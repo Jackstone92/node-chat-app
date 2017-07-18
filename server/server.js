@@ -9,6 +9,8 @@ const publicPath = path.join(__dirname, '../public');
 
 const port = process.env.PORT || 3000;
 
+const { generateMessage } = require('./utils/message');
+
 // console.log(__dirname + '/../public');
 // console.log(publicPath);
 
@@ -33,19 +35,18 @@ io.on('connection', (socket) => {
   //   createdAt: 123
   // });
 
-  socket.emit('newMessage', {
-    from: 'Jess',
-    text: 'See you then',
-    createdAt: 123123
-  });
+  socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat app'));
 
-  // server eventListener //
-  // socket.on('createEmail', (email) => {
-  //   console.log('CreateEmail', email);
-  // });
+  // send event to everybody but this current socket //
+  socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined'));
 
-  socket.on('createMessage', (message) => {
+  socket.on('createMessage', (message, callback) => {
     console.log('createMessage', message);
+
+    // emit event to every single connection via io.emit() rather than just socket //
+    io.emit('newMessage', generateMessage(message.from, message.text));
+    // acknoledge receipt //
+    callback('This is from the server.');
   });
 
   socket.on('disconnect', () => {
