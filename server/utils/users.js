@@ -4,6 +4,7 @@
 class Users {
   constructor() {
     this.users = [];
+    this.rooms = [];
   }
 
   addUser(id, name, room) {
@@ -27,6 +28,8 @@ class Users {
     return this.users.filter((user) => user.id === id)[0];
   }
 
+
+
   getUserList(room) {
     var users = this.users.filter((user) => {
       // return users in same room //
@@ -40,7 +43,6 @@ class Users {
 
     return namesArray;
   }
-
 }
 
 

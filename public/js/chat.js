@@ -24,8 +24,7 @@ function scrollToBottom() {
 
 // client eventlisteners //
 socket.on('connect', function() {
-  console.log('Connected to server');
-
+  // console.log('Connected to server');
   // Join Chat Rooms //
   var params = jQuery.deparam(window.location.search);
 
