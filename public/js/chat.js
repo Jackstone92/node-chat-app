@@ -15,7 +15,7 @@ function scrollToBottom() {
 
   // calculation //
   if(clientHeight + scrollTop + newMessageHeight + lastMessageHeight >= scrollHeight) {
-    console.log('Should scroll');
+    // console.log('Should scroll');
     messages.scrollTop(scrollHeight);
   }
 }
@@ -26,6 +26,19 @@ function scrollToBottom() {
 socket.on('connect', function() {
   console.log('Connected to server');
 
+  // Join Chat Rooms //
+  var params = jQuery.deparam(window.location.search);
+
+  socket.emit('join', params, function(err) {
+    // callback //
+    if(err) {
+      alert(err);
+      window.location.href="/";
+    } else {
+      // console.log('No error');
+    }
+  });
+
   // creating an event on the client - data object as second argument //
   // socket.emit('createEmail', {
   //   to: 'jen@example.com',
@@ -35,6 +48,18 @@ socket.on('connect', function() {
 
 socket.on('disconnect', function() {
   console.log('Disconnected from server');
+});
+
+// Update the userlist //
+socket.on('updateUserList', function(users) {
+  // console.log('Users list:', users);
+  var ol = jQuery('<ol></ol>');
+
+  users.forEach(function(user) {
+    ol.append(jQuery('<li></li>').text(user));
+  });
+
+  jQuery('#users').html(ol);
 });
 
 // custom events //
